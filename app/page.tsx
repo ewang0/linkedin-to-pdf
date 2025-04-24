@@ -1,103 +1,290 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import {
+  Loader2,
+  FileDown,
+  CheckCircle,
+  AlertCircle,
+  Eye,
+  EyeOff,
+  LogOut,
+} from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ResumePreview } from "@/components/resume-preview";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+
+export default function LinkedInResumeGenerator() {
+  const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [resumeUrl, setResumeUrl] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const steps = [
+    "Connecting to LinkedIn...",
+    "Scraping profile data...",
+    "Extracting work experience...",
+    "Analyzing skills and education...",
+    "Formatting resume...",
+    "Generating final document...",
+  ];
+
+  const handleLinkedInLogin = () => {
+    // Mock authentication - just for UI demonstration
+    setIsAuthenticated(true);
+    setLinkedinUrl("https://www.linkedin.com/in/alexjohnson");
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setLinkedinUrl("");
+  };
+
+  const handleGenerate = async () => {
+    // Validate URL
+    if (!linkedinUrl.includes("linkedin.com/")) {
+      setError("Please enter a valid LinkedIn URL");
+      return;
+    }
+
+    setError(null);
+    setIsGenerating(true);
+    setCurrentStep(0);
+    setResumeUrl(null);
+    setShowPreview(true);
+
+    // Simulate the scraping and generation process
+    try {
+      // Simulate each step with a delay
+      for (let i = 0; i < steps.length; i++) {
+        setCurrentStep(i);
+        // Wait 1-2 seconds between steps
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 + Math.random() * 1000)
+        );
+      }
+
+      // Simulate successful generation
+      setResumeUrl("/sample-resume.pdf");
+      setIsGenerating(false);
+    } catch (err) {
+      console.error(err);
+      setError("An error occurred during resume generation. Please try again.");
+      setIsGenerating(false);
+    }
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="container max-w-4xl py-6 sm:py-10 px-4 mx-auto">
+      <h1 className="text-2xl sm:text-3xl font-bold text-center mb-4 sm:mb-8">
+        LinkedIn to Resume Generator
+      </h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      <Card className="shadow-md">
+        <CardHeader className="px-4 sm:px-6 py-4 sm:py-6">
+          <CardTitle className="text-xl sm:text-2xl">
+            Generate Your Resume
+          </CardTitle>
+          <CardDescription className="text-sm sm:text-base mt-1">
+            Connect with LinkedIn to quickly generate a professional resume
+            based on your profile information.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex flex-col gap-4 sm:gap-6">
+            {/* LinkedIn Login Section */}
+            {!isAuthenticated ? (
+              <div className="flex flex-col gap-4 items-start py-2">
+                <Button
+                  onClick={handleLinkedInLogin}
+                  className="bg-[#0A66C2] hover:bg-[#004182] text-white font-medium h-12 px-6"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="w-5 h-5 mr-2"
+                    aria-hidden="true"
+                  >
+                    <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
+                  </svg>
+                  Log in with LinkedIn
+                </Button>
+              </div>
+            ) : (
+              <div className="bg-muted/50 rounded-lg p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Alex Johnson</span>
+                    <Badge
+                      variant="outline"
+                      className="bg-blue-50 text-blue-700 border-blue-200"
+                    >
+                      LinkedIn Connected
+                    </Badge>
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    alex.johnson@example.com
+                  </span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="h-8"
+                >
+                  <LogOut className="h-3.5 w-3.5 mr-1.5" />
+                  Disconnect
+                </Button>
+              </div>
+            )}
+
+            {/* Horizontal Divider */}
+            <Separator className="my-2" />
+
+            {/* LinkedIn URL Input */}
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor="linkedin-url"
+                className={`text-sm font-medium ${
+                  !isAuthenticated ? "text-muted-foreground" : ""
+                }`}
+              >
+                LinkedIn Profile URL
+              </label>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Input
+                  id="linkedin-url"
+                  placeholder="https://www.linkedin.com/in/yourprofile"
+                  value={linkedinUrl}
+                  onChange={(e) => setLinkedinUrl(e.target.value)}
+                  disabled={isGenerating || !isAuthenticated}
+                  className="flex-1 min-h-10 text-base"
+                />
+                <Button
+                  onClick={handleGenerate}
+                  disabled={isGenerating || !linkedinUrl || !isAuthenticated}
+                  className="h-12 sm:h-10 text-base sm:text-sm font-medium"
+                >
+                  {isGenerating ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing
+                    </>
+                  ) : (
+                    "Generate Resume"
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {error && (
+              <Alert variant="destructive" className="p-3 sm:p-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle className="text-sm font-medium">Error</AlertTitle>
+                <AlertDescription className="text-sm">{error}</AlertDescription>
+              </Alert>
+            )}
+
+            {isGenerating && (
+              <div className="space-y-3 sm:space-y-4 py-2">
+                <Progress
+                  value={((currentStep + 1) / steps.length) * 100}
+                  className="h-2.5"
+                />
+                <p className="text-sm text-muted-foreground">
+                  {steps[currentStep]}
+                </p>
+              </div>
+            )}
+
+            {resumeUrl && !isGenerating && (
+              <div className="space-y-4">
+                <Alert className="bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-900 p-3 sm:p-4">
+                  <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+                  <AlertTitle className="text-sm font-medium">
+                    Resume Generated Successfully!
+                  </AlertTitle>
+                  <AlertDescription className="flex flex-col gap-3 mt-1.5">
+                    <p className="text-sm">
+                      Your resume has been created based on your LinkedIn
+                      profile.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Button
+                        variant="outline"
+                        className="h-12 sm:h-10 text-base sm:text-sm"
+                        onClick={() => window.open(resumeUrl, "_blank")}
+                      >
+                        <FileDown className="mr-2 h-4 w-4" />
+                        Download Resume
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        className="h-12 sm:h-10 text-base sm:text-sm"
+                        onClick={() => setShowPreview(!showPreview)}
+                      >
+                        {showPreview ? (
+                          <>
+                            <EyeOff className="mr-2 h-4 w-4" />
+                            Hide Preview
+                          </>
+                        ) : (
+                          <>
+                            <Eye className="mr-2 h-4 w-4" />
+                            Show Preview
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </AlertDescription>
+                </Alert>
+
+                {showPreview && (
+                  <div className="border rounded-lg overflow-hidden">
+                    <div className="bg-muted p-3 border-b flex justify-between items-center">
+                      <h3 className="font-medium">Resume Preview</h3>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2"
+                        onClick={() => setShowPreview(false)}
+                      >
+                        <EyeOff className="h-4 w-4" />
+                        <span className="sr-only">Hide Preview</span>
+                      </Button>
+                    </div>
+                    <div className="bg-white p-1">
+                      <ResumePreview />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col items-start text-xs sm:text-sm text-muted-foreground px-4 sm:px-6 py-3 sm:py-4 border-t">
+          <p>
+            Note: This tool extracts public information from your LinkedIn
+            profile to create a resume.
+          </p>
+        </CardFooter>
+      </Card>
     </div>
   );
 }
