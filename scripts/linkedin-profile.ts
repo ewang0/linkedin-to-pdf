@@ -1,3 +1,4 @@
+import { LINKEDIN_AUTH_FILE } from "@/lib/config";
 import { chromium, Page } from "playwright";
 
 export async function loadLinkedInProfile(username: string) {
@@ -5,7 +6,7 @@ export async function loadLinkedInProfile(username: string) {
     headless: true,
   });
   const context = await browser.newContext({
-    storageState: "auth-cookies/linkedin-auth.json",
+    storageState: LINKEDIN_AUTH_FILE,
   });
 
   const page = await context.newPage();

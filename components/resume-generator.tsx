@@ -21,23 +21,35 @@ import {
   LogOut,
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ResumePreview } from "@/components/resume-preview";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import { ResumePDF } from "@/components/resume-pdf";
 import { ProfileData } from "@/types";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function LinkedInResumeGenerator() {
+  // forms
   const [linkedinUrl, setLinkedinUrl] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
+
+  // intermediate UI states
   const [error, setError] = useState<string | null>(null);
-  const [resumeUrl, setResumeUrl] = useState<string | null>(null);
-  const [showPreview, setShowPreview] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // store scraped profile data
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
 
+  // show preview
+  const [showPreview, setShowPreview] = useState(true);
+
+  // check if user is authenticated
   useEffect(() => {
     checkAuthStatus();
   }, []);
@@ -93,6 +105,8 @@ export default function LinkedInResumeGenerator() {
       if (response.ok) {
         setIsAuthenticated(false);
         setLinkedinUrl("");
+        setProfileData(null);
+        setError(null);
       } else {
         console.error("Failed to logout properly");
       }
@@ -100,6 +114,8 @@ export default function LinkedInResumeGenerator() {
       console.error("Logout error:", err);
       setIsAuthenticated(false);
       setLinkedinUrl("");
+      setProfileData(null);
+      setError(null);
     }
   };
 
@@ -120,7 +136,6 @@ export default function LinkedInResumeGenerator() {
 
     setError(null);
     setIsGenerating(true);
-    setResumeUrl(null);
     setShowPreview(true);
 
     try {
@@ -140,8 +155,6 @@ export default function LinkedInResumeGenerator() {
       const profileData = await loadResponse.json();
 
       setProfileData(profileData.data);
-
-      setResumeUrl("/sample-resume.pdf");
       setIsGenerating(false);
     } catch (err) {
       console.error(err);
@@ -199,7 +212,7 @@ export default function LinkedInResumeGenerator() {
             <div className="bg-muted/50 rounded-lg p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium">User</span>
+                  <span className="font-medium">LinkedIn User</span>
                   <Badge
                     variant="outline"
                     className="bg-blue-50 text-blue-700 border-blue-200"
@@ -209,12 +222,12 @@ export default function LinkedInResumeGenerator() {
                 </div>
               </div>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={handleLogout}
-                className="h-8"
+                className="h-8 cursor-pointer"
               >
-                <LogOut className="h-3.5 w-3.5 mr-1.5" />
+                <LogOut className="h-3.5 w-3.5" />
                 Sign Out
               </Button>
             </div>
@@ -230,14 +243,36 @@ export default function LinkedInResumeGenerator() {
               LinkedIn Profile URL
             </label>
             <div className="flex flex-col sm:flex-row gap-3">
-              <Input
-                id="linkedin-url"
-                placeholder="https://www.linkedin.com/in/yourprofile"
-                value={linkedinUrl}
-                onChange={(e) => setLinkedinUrl(e.target.value)}
-                disabled={isGenerating || !isAuthenticated}
-                className="flex-1 min-h-10 text-base"
-              />
+              {!isAuthenticated ? (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex-1">
+                        <Input
+                          id="linkedin-url"
+                          placeholder="https://www.linkedin.com/in/yourprofile"
+                          value={linkedinUrl}
+                          onChange={(e) => setLinkedinUrl(e.target.value)}
+                          disabled={true}
+                          className="flex-1 min-h-10 text-base w-full"
+                        />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Log in with LinkedIn to generate a resume</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <Input
+                  id="linkedin-url"
+                  placeholder="https://www.linkedin.com/in/yourprofile"
+                  value={linkedinUrl}
+                  onChange={(e) => setLinkedinUrl(e.target.value)}
+                  disabled={isGenerating}
+                  className="flex-1 min-h-10 text-base"
+                />
+              )}
               <Button
                 onClick={async () => {
                   setIsGenerating(true);
@@ -266,7 +301,7 @@ export default function LinkedInResumeGenerator() {
             </Alert>
           )}
 
-          {resumeUrl && !isGenerating && (
+          {profileData && !isGenerating && (
             <div className="space-y-4">
               <Alert className="bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-900 p-3 mb-6 sm:p-4">
                 <CheckCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
@@ -302,16 +337,7 @@ export default function LinkedInResumeGenerator() {
                           );
                         }}
                       </PDFDownloadLink>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        className="h-12 sm:h-10 text-base sm:text-sm cursor-pointer bg-emerald-500 hover:bg-emerald-600 text-white hover:text-white border-emerald-500 hover:border-emerald-600"
-                        onClick={() => window.open(resumeUrl, "_blank")}
-                      >
-                        <FileDown className="h-4 w-4 mr-2" />
-                        Download Resume
-                      </Button>
-                    )}
+                    ) : null}
                     <Button
                       variant="outline"
                       className="h-12 sm:h-10 text-base sm:text-sm cursor-pointer"
@@ -339,12 +365,10 @@ export default function LinkedInResumeGenerator() {
                     <h3 className="font-medium">Resume Preview</h3>
                   </div>
                   <div className="bg-white">
-                    {profileData ? (
+                    {profileData && (
                       <PDFViewer width="100%" height={800} className="border-0">
                         <ResumePDF profileData={profileData} />
                       </PDFViewer>
-                    ) : (
-                      <ResumePreview />
                     )}
                   </div>
                 </div>
@@ -355,8 +379,8 @@ export default function LinkedInResumeGenerator() {
       </CardContent>
       <CardFooter className="flex flex-col items-start text-xs sm:text-sm text-muted-foreground px-4 sm:px-6 border-t">
         <p>
-          Note: This tool extracts public information from your LinkedIn profile
-          to create a resume.
+          Note: This tool extracts information from your LinkedIn profile to
+          create a PDF resume.
         </p>
       </CardFooter>
     </Card>
