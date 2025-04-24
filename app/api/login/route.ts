@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function POST() {
   try {
     const scriptOutput = await new Promise((resolve, reject) => {
-      exec("bun run app/scripts/login.ts", (error, stdout, stderr) => {
+      exec("bun run scripts/login.ts", (error, stdout, stderr) => {
         if (error) {
           reject(error);
           return;

@@ -18,7 +18,7 @@ export async function GET() {
     // Path to the LinkedIn auth file
     const authFilePath = path.join(
       process.cwd(),
-      "app/auth-cookies/linkedin-auth.json"
+      "/auth-cookies/linkedin-auth.json"
     );
 
     // Check if the file exists
