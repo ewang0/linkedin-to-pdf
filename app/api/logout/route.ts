@@ -1,22 +1,18 @@
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
-
+import { LINKEDIN_AUTH_FILE } from "@/lib/config";
 export async function POST() {
   try {
-    const filePath = path.join(
-      process.cwd(),
-      "auth-cookies/linkedin-auth.json"
-    );
+    const filePath = path.join(process.cwd(), LINKEDIN_AUTH_FILE);
 
     // Check if file exists before attempting to delete
     try {
       await fs.access(filePath);
-      // File exists, delete it
+      // If file exists, delete it
       await fs.unlink(filePath);
     } catch (error) {
       console.log(error);
-      // File doesn't exist, which is fine for logout
       console.log("Auth file already deleted or does not exist");
     }
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
+import { LINKEDIN_AUTH_FILE } from "@/lib/config";
 
 interface Cookie {
   name: string;
@@ -13,13 +14,11 @@ interface Cookie {
   sameSite: string;
 }
 
+// TODO: add DB
 export async function GET() {
   try {
     // Path to the LinkedIn auth file
-    const authFilePath = path.join(
-      process.cwd(),
-      "app/auth-cookies/linkedin-auth.json"
-    );
+    const authFilePath = path.join(process.cwd(), LINKEDIN_AUTH_FILE);
 
     // Check if the file exists
     let fileExists = false;
@@ -39,7 +38,6 @@ export async function GET() {
     const authData = JSON.parse(fileContent);
 
     // Check if the file has valid authentication data
-    // Consider the user authenticated if there are cookies, especially li_at cookie
     const isAuthenticated =
       authData.cookies &&
       Array.isArray(authData.cookies) &&

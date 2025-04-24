@@ -1,19 +1,17 @@
-import { exec } from "child_process";
 import { NextResponse } from "next/server";
+import { login } from "@/scripts/login";
 
 export async function POST() {
   try {
-    const scriptOutput = await new Promise((resolve, reject) => {
-      exec("bun run app/scripts/login.ts", (error, stdout, stderr) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve({ stdout, stderr });
-      });
-    });
+    const result = await login();
+    if (!result.success) {
+      return NextResponse.json(
+        { success: false, error: result.error },
+        { status: 500 }
+      );
+    }
 
-    return NextResponse.json({ success: true, output: scriptOutput });
+    return NextResponse.json({ success: true, state: result.state });
   } catch (error) {
     console.error("Error executing login script:", error);
     return NextResponse.json(
