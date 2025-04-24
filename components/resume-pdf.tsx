@@ -8,6 +8,7 @@ import {
   Image,
   PDFViewer,
 } from "@react-pdf/renderer";
+import { ProfileData, Education, Experience } from "@/types";
 
 const styles = StyleSheet.create({
   page: {
@@ -90,38 +91,7 @@ const styles = StyleSheet.create({
   },
 });
 
-// Define types for the resume data
-interface Education {
-  school: string;
-  degree: string;
-  duration: string;
-  description?: string;
-}
-
-interface Experience {
-  title: string;
-  companyInfo: string;
-  duration: string;
-  location?: string;
-  descriptions: string[];
-}
-
-interface ResumeData {
-  name?: string;
-  headline?: string;
-  email?: string;
-  location?: string;
-  summary?: string;
-  profilePicture?: string;
-  experience?: Experience[];
-  education?: Education[];
-  skills?: string[];
-  profileData?: ResumeData;
-}
-
-export const ResumePDF = ({ data }: { data: ResumeData }) => {
-  const profileData = data.profileData || data;
-
+export const ResumePDF = ({ profileData }: { profileData: ProfileData }) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -135,18 +105,8 @@ export const ResumePDF = ({ data }: { data: ResumeData }) => {
           <Text style={styles.header}>{profileData?.name || "Full Name"}</Text>
           <Text style={styles.contactInfo}>
             {profileData?.headline || "Professional Title"}
-            {profileData?.email && ` | ${profileData.email}`}
-            {profileData?.location && ` | ${profileData.location}`}
           </Text>
         </View>
-
-        {/* Summary Section - only if provided */}
-        {profileData?.summary && (
-          <View style={styles.section}>
-            <Text style={styles.subheader}>Summary</Text>
-            <Text style={styles.description}>{profileData.summary}</Text>
-          </View>
-        )}
 
         {/* Experience Section */}
         <View style={styles.section}>
@@ -186,9 +146,9 @@ export const ResumePDF = ({ data }: { data: ResumeData }) => {
           {profileData?.education && profileData.education.length > 0 ? (
             profileData.education.map((edu: Education, index: number) => (
               <View key={index} style={styles.experienceItem}>
-                <Text style={styles.companyName}>{edu.school}</Text>
+                <Text style={styles.companyName}>{edu.schoolName}</Text>
                 <Text style={styles.jobTitle}>{edu.degree}</Text>
-                <Text style={styles.dates}>{edu.duration}</Text>
+                <Text style={styles.dates}>{edu.year}</Text>
                 {edu.description && (
                   <Text style={styles.description}>{edu.description}</Text>
                 )}
@@ -207,9 +167,9 @@ export const ResumePDF = ({ data }: { data: ResumeData }) => {
   );
 };
 
-const ResumePDFViewer = ({ profileData }: { profileData: ResumeData }) => (
+const ResumePDFViewer = ({ profileData }: { profileData: ProfileData }) => (
   <PDFViewer style={{ width: "100%", height: "100%", minHeight: "500px" }}>
-    <ResumePDF data={profileData} />
+    <ResumePDF profileData={profileData} />
   </PDFViewer>
 );
 

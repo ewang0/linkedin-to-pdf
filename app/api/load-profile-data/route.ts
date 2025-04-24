@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { loadLinkedInProfile } from "@/scripts/linkedin-profile";
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
-    // mock data
-    const profileData = await loadLinkedInProfile();
+    const { username } = await request.json();
+    const { profileData } = await loadLinkedInProfile(username);
 
-    return NextResponse.json({ success: true, profileData });
+    return NextResponse.json({ success: true, data: profileData });
   } catch (error) {
     console.error("Error loading LinkedIn profile:", error);
     return NextResponse.json(
