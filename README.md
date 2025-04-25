@@ -59,6 +59,7 @@ The application guides users through logging into LinkedIn via a browser session
 - 🔐 **Enhanced Auth Strategy**  
   If access is granted, switch to using the official LinkedIn API for a more secure and scalable solution.
 - 🧩 **Componentization**
+- ❗️**Improved Error Handling**
 
 ## Example Resume
 
