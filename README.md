@@ -7,7 +7,7 @@ A web application that allows users to authenticate with LinkedIn, scrape their 
 ## ✨ Features
 
 - 🔐 **LinkedIn Authentication**  
-  Users log in via LinkedIn to securely scrape their profile data.
+  Users log in via LinkedIn to scrape their profile data.
 - 🔎 **Profile Scraper**  
   Utilizes [Playwright](https://playwright.dev/) to extract work experience, education, and more from LinkedIn.
 - 🧾 **PDF Resume Generation**  
@@ -58,6 +58,8 @@ The application guides users through logging into LinkedIn via a browser session
   Encapsulate authentication and scraping logic into React hooks for cleaner, reusable code.
 - 🔐 **Enhanced Auth Strategy**  
   If access is granted, switch to using the official LinkedIn API for a more secure and scalable solution.
+- 🧩 Componentization
+  Break down the main page into smaller, reusable components to improve readability, maintainability, and scalability.
 
 ## Example Resume
 
