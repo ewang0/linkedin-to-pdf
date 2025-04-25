@@ -58,7 +58,7 @@ The application guides users through logging into LinkedIn via a browser session
   Encapsulate authentication and scraping logic into React hooks for cleaner, reusable code.
 - 🔐 **Enhanced Auth Strategy**  
   If access is granted, switch to using the official LinkedIn API for a more secure and scalable solution.
-- 🧩 Componentization
+- 🧩 **Componentization**
   Break down the main page into smaller, reusable components to improve readability, maintainability, and scalability.
 
 ## Example Resume
