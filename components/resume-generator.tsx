@@ -54,6 +54,9 @@ export default function LinkedInResumeGenerator() {
     checkAuthStatus();
   }, []);
 
+  // Add a state variable or derived constant for URL validity
+  const isUrlValid = linkedinUrl.includes("linkedin.com/in/");
+
   const checkAuthStatus = async () => {
     try {
       const response = await fetch("/api/check-auth-status", {
@@ -120,12 +123,6 @@ export default function LinkedInResumeGenerator() {
   };
 
   const handleGenerate = async () => {
-    // Validate URL
-    if (!linkedinUrl.includes("linkedin.com/in/")) {
-      setError("Please enter a valid LinkedIn URL");
-      return;
-    }
-
     // Extract username from LinkedIn URL
     const usernameMatch = linkedinUrl.match(/linkedin\.com\/in\/([^\/]+)/);
     if (!usernameMatch || !usernameMatch[1]) {
@@ -268,17 +265,32 @@ export default function LinkedInResumeGenerator() {
                   id="linkedin-url"
                   placeholder="https://www.linkedin.com/in/yourprofile"
                   value={linkedinUrl}
-                  onChange={(e) => setLinkedinUrl(e.target.value)}
+                  onChange={(e) => {
+                    setLinkedinUrl(e.target.value);
+                    // Clear error when user types
+                    if (
+                      error ===
+                      "Please enter a valid LinkedIn URL (e.g., https://www.linkedin.com/in/yourprofile)"
+                    ) {
+                      setError(null);
+                    }
+                  }}
                   disabled={isGenerating}
                   className="flex-1 min-h-10 text-base"
                 />
               )}
               <Button
                 onClick={async () => {
-                  setIsGenerating(true);
+                  // No need to set isGenerating here, handleGenerate does it
                   handleGenerate();
                 }}
-                disabled={isGenerating || !linkedinUrl || !isAuthenticated}
+                // Update the disabled condition to include URL validity check
+                disabled={
+                  isGenerating ||
+                  !linkedinUrl ||
+                  !isAuthenticated ||
+                  !isUrlValid
+                }
                 className="h-12 sm:h-10 text-base sm:text-sm font-medium"
               >
                 {isGenerating ? (
@@ -291,6 +303,13 @@ export default function LinkedInResumeGenerator() {
                 )}
               </Button>
             </div>
+            {/* Optionally show a hint if the URL is invalid and the input is focused/dirty */}
+            {isAuthenticated && linkedinUrl && !isUrlValid && (
+              <p className="text-xs text-destructive mt-1">
+                Please enter a valid LinkedIn profile URL (must include
+                &quot;linkedin.com/in/&quot;).
+              </p>
+            )}
           </div>
 
           {error && (

@@ -2,17 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
 import { LINKEDIN_AUTH_FILE } from "@/lib/config";
-
-interface Cookie {
-  name: string;
-  value: string;
-  domain: string;
-  path: string;
-  expires: number;
-  httpOnly: boolean;
-  secure: boolean;
-  sameSite: string;
-}
+import { Cookie } from "@/types";
 
 // TODO: add DB
 export async function GET() {
