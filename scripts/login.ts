@@ -10,7 +10,7 @@ export const login = async () => {
 
   await page.goto(LINKEDIN_URL);
 
-  const WAITTIME_FOR_LOGIN = 120000; // 2 mims
+  const WAITTIME_FOR_LOGIN = 120000; // 2 mins
 
   try {
     // Wait for an element on the feed page
@@ -46,7 +46,6 @@ export const login = async () => {
       await page.url()
     );
     console.error("Error: ", error);
-    // Prevent any lingering processes
     await context.close();
     await browser.close();
     return { success: false, error: error };

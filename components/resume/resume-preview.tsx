@@ -6,7 +6,7 @@ import { CheckCircle, Eye, EyeOff, FileDown } from "lucide-react";
 import { ProfileData } from "@/types";
 
 interface ResumePreviewProps {
-  profileData: ProfileData; // Replace with your actual profile data type
+  profileData: ProfileData;
   showPreview: boolean;
   togglePreview: () => void;
 }
@@ -31,7 +31,7 @@ export function ResumePreview({
             <PDFDownloadLink
               document={<ResumePDF profileData={profileData} />}
               fileName="linkedin-resume.pdf"
-              className="inline-flex"
+              className="inline-flex w-full sm:w-auto"
             >
               {({ loading, error }) => {
                 if (error) console.error("PDF generation error:", error);
@@ -39,7 +39,7 @@ export function ResumePreview({
                 return (
                   <Button
                     variant="outline"
-                    className="h-12 sm:h-10 text-base sm:text-sm cursor-pointer bg-emerald-500 hover:bg-emerald-600 text-white hover:text-white border-emerald-500 hover:border-emerald-600"
+                    className="h-12 sm:h-10 text-base sm:text-sm cursor-pointer bg-emerald-500 hover:bg-emerald-600 text-white hover:text-white border-emerald-500 hover:border-emerald-600 w-full"
                     disabled={loading}
                   >
                     <FileDown className="h-4 w-4" />

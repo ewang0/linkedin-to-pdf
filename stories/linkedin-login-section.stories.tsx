@@ -46,11 +46,7 @@ export const LoggingIn: Story = {
 };
 
 export const LoggedIn: Story = {
-  render: (args) => (
-    <div className="w-[864px]">
-      <LinkedInLoginSection {...args} />
-    </div>
-  ),
+  render: (args) => <LinkedInLoginSection {...args} />,
   args: {
     isAuthenticated: true,
     isLoggingIn: false,
