@@ -281,10 +281,8 @@ export default function LinkedInResumeGenerator() {
               )}
               <Button
                 onClick={async () => {
-                  // No need to set isGenerating here, handleGenerate does it
                   handleGenerate();
                 }}
-                // Update the disabled condition to include URL validity check
                 disabled={
                   isGenerating ||
                   !linkedinUrl ||
