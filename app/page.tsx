@@ -6,7 +6,6 @@ export default function LinkedInResumeGenerator() {
       <h1 className="text-2xl sm:text-3xl font-bold text-center mb-4 sm:mb-8">
         LinkedIn to Resume Generator
       </h1>
-
       <ResumeGenerator />
     </div>
   );
