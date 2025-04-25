@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LinkedIn Resume Generator
 
-## Getting Started
+<img width="1466" alt="Screenshot 2025-04-24 at 8 03 14 PM" src="https://github.com/user-attachments/assets/10ca13ff-8979-4d38-9855-15c1cdabd359" />
 
-First, run the development server:
+A web application that allows users to authenticate with LinkedIn, scrape their profile information using Playwright, and generate a beautifully formatted PDF resume using [React-PDF](https://react-pdf.org/). Built with [Next.js](https://nextjs.org/).
 
+## ✨ Features
+
+- 🔐 **LinkedIn Authentication**  
+  Users log in via LinkedIn to securely scrape their profile data.
+- 🔎 **Profile Scraper**  
+  Utilizes [Playwright](https://playwright.dev/) to extract work experience, education, and more from LinkedIn.
+- 🧾 **PDF Resume Generation**  
+  Generates a clean and printable PDF using React-PDF based on scraped profile information.
+- 🎨 **Frontend Styling**  
+  Polished UI built with React and styled using modern design principles.
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org/)
+- **Scraping**: [Playwright](https://playwright.dev/)
+- **PDF Rendering**: [React-PDF](https://react-pdf.org/)
+- **Authentication**: LinkedIn session-based login via Playwright
+- **Styling**: Tailwind CSS or your preferred CSS framework
+
+## 🚀 Getting Started
+
+### 1. Clone the repo
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/ewang0/linkedin-to-pdf.git
+cd linkedin-to-pdf
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install dependencies
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Run the development server
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Run the scraper (Playwright)
+Ensure Playwright is installed:
+```bash
+npx playwright install
+```
 
-## Learn More
+The application guides users through logging into LinkedIn via a browser session.
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🧪 Improvements & Future Iterations
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 🗄️ **Add Local DB (e.g. SQLite)**  
+  Persist auth and user profile data locally to allow for re-generation and editing without re-scraping.
+- 🧩 **Use Custom Hooks**  
+  Encapsulate authentication and scraping logic into React hooks for cleaner, reusable code.
+- 🔐 **Enhanced Auth Strategy**  
+  If access is granted, switch to using the official LinkedIn API for a more secure and scalable solution.
 
-## Deploy on Vercel
+## Example Resume
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[linkedin-resume (19).pdf](https://github.com/user-attachments/files/19900626/linkedin-resume.19.pdf)
