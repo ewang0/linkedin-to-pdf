@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,143 +24,54 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import { ResumePDF } from "@/components/resume-pdf";
-import { ProfileData } from "@/types";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useLinkedInAuth } from "@/hooks/useLinkedInAuth";
+import { useLinkedInProfile } from "@/hooks/useLinkedInProfile";
+import { useResumeGenerator } from "@/hooks/useResumeGenerator";
 
 export default function LinkedInResumeGenerator() {
-  // forms
-  const [linkedinUrl, setLinkedinUrl] = useState("");
+  const { isAuthenticated, isLoggingIn, authError, handleLogin, handleLogout } =
+    useLinkedInAuth();
 
-  // intermediate UI states
-  const [error, setError] = useState<string | null>(null);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const {
+    linkedinUrl,
+    updateLinkedinUrl,
+    isUrlValid,
+    urlError,
+    extractUsername,
+    resetUrl,
+  } = useLinkedInProfile();
 
-  // store scraped profile data
-  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const {
+    profileData,
+    isGenerating,
+    showPreview,
+    generationError,
+    generateResume,
+    togglePreview,
+    resetGenerator,
+  } = useResumeGenerator();
 
-  // show preview
-  const [showPreview, setShowPreview] = useState(true);
-
-  // check if user is authenticated
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
-
-  // Add a state variable or derived constant for URL validity
-  const isUrlValid = linkedinUrl.includes("linkedin.com/in/");
-
-  const checkAuthStatus = async () => {
-    try {
-      const response = await fetch("/api/check-auth-status", {
-        method: "GET",
-      });
-
-      const data = await response.json();
-
-      if (data.isAuthenticated) {
-        setIsAuthenticated(true);
-      }
-    } catch (err) {
-      console.error("Error checking authentication status:", err);
-    }
-  };
-
-  const handleLogin = async () => {
-    try {
-      setIsLoggingIn(true);
-      setError(null);
-
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setIsAuthenticated(true);
-      } else {
-        setError("LinkedIn login failed: " + (data.error || "Unknown error"));
-      }
-    } catch (err) {
-      console.error("Login error:", err);
-    } finally {
-      setIsLoggingIn(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      const response = await fetch("/api/logout", {
-        method: "POST",
-      });
-
-      if (response.ok) {
-        setIsAuthenticated(false);
-        setLinkedinUrl("");
-        setProfileData(null);
-        setError(null);
-      } else {
-        console.error("Failed to logout properly");
-      }
-    } catch (err) {
-      console.error("Logout error:", err);
-      setIsAuthenticated(false);
-      setLinkedinUrl("");
-      setProfileData(null);
-      setError(null);
-    }
-  };
+  // Combine errors for display
+  const error = authError || urlError || generationError;
 
   const handleGenerate = async () => {
-    // Extract username from LinkedIn URL
-    const usernameMatch = linkedinUrl.match(/linkedin\.com\/in\/([^\/]+)/);
-    if (!usernameMatch || !usernameMatch[1]) {
-      setError("Could not extract username from LinkedIn URL");
-      return;
+    const username = extractUsername();
+    if (username) {
+      await generateResume(username);
     }
-    const username = usernameMatch[1];
+  };
 
-    setError(null);
-    setIsGenerating(true);
-    setShowPreview(true);
-
-    try {
-      const loadResponse = await fetch("/api/load-profile-data", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username }),
-      });
-
-      if (!loadResponse.ok) {
-        const errorData = await loadResponse.json();
-        throw new Error(errorData.error || "Failed to load LinkedIn profile");
-      }
-
-      const profileData = await loadResponse.json();
-
-      setProfileData(profileData.data);
-      setIsGenerating(false);
-    } catch (err) {
-      console.error(err);
-      setError(
-        `An error occurred: ${
-          err instanceof Error ? err.message : "Unknown error"
-        }`
-      );
-      setIsGenerating(false);
-    }
+  // Handle logout with cleanup
+  const handleLogoutWithCleanup = async () => {
+    await handleLogout();
+    resetUrl();
+    resetGenerator();
   };
 
   return (
@@ -221,7 +131,7 @@ export default function LinkedInResumeGenerator() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={handleLogout}
+                onClick={handleLogoutWithCleanup}
                 className="h-8 cursor-pointer"
               >
                 <LogOut className="h-3.5 w-3.5" />
@@ -249,7 +159,7 @@ export default function LinkedInResumeGenerator() {
                           id="linkedin-url"
                           placeholder="https://www.linkedin.com/in/yourprofile"
                           value={linkedinUrl}
-                          onChange={(e) => setLinkedinUrl(e.target.value)}
+                          onChange={(e) => updateLinkedinUrl(e.target.value)}
                           disabled={true}
                           className="flex-1 min-h-10 text-base w-full"
                         />
@@ -265,24 +175,13 @@ export default function LinkedInResumeGenerator() {
                   id="linkedin-url"
                   placeholder="https://www.linkedin.com/in/yourprofile"
                   value={linkedinUrl}
-                  onChange={(e) => {
-                    setLinkedinUrl(e.target.value);
-                    // Clear error when user types
-                    if (
-                      error ===
-                      "Please enter a valid LinkedIn URL (e.g., https://www.linkedin.com/in/yourprofile)"
-                    ) {
-                      setError(null);
-                    }
-                  }}
+                  onChange={(e) => updateLinkedinUrl(e.target.value)}
                   disabled={isGenerating}
                   className="flex-1 min-h-10 text-base"
                 />
               )}
               <Button
-                onClick={async () => {
-                  handleGenerate();
-                }}
+                onClick={handleGenerate}
                 disabled={
                   isGenerating ||
                   !linkedinUrl ||
@@ -358,7 +257,7 @@ export default function LinkedInResumeGenerator() {
                     <Button
                       variant="outline"
                       className="h-12 sm:h-10 text-base sm:text-sm cursor-pointer"
-                      onClick={() => setShowPreview(!showPreview)}
+                      onClick={togglePreview}
                     >
                       {showPreview ? (
                         <>
