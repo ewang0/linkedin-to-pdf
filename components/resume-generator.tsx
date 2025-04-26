@@ -21,6 +21,7 @@ export default function LinkedInResumeGenerator() {
   const { isAuthenticated, isLoggingIn, authError, handleLogin, handleLogout } =
     useLinkedInAuth();
 
+  // TODO: reduce to linkedinUrl, username, urlError, setLinkedinUrl
   const {
     linkedinUrl,
     updateLinkedinUrl,

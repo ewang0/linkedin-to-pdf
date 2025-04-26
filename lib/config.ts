@@ -67,3 +67,38 @@ export const SAMPLE_PROFILE_DATA_MINIMAL: ProfileData = {
     },
   ],
 };
+export const TEST_PROFILE_DATA: ProfileData = {
+  name: "Jane Doe",
+  headline: "Software Engineer | React | TypeScript | Node.js",
+  profilePicture: "",
+  education: [
+    {
+      schoolName: "University of California, Berkeley",
+      degree: "Bachelor of Science in Computer Science",
+      year: "2013-2017",
+      description: "Computer Science major with focus on web technologies",
+    },
+  ],
+  experience: [
+    {
+      title: "Senior Software Engineer",
+      companyInfo: "Tech Solutions Inc.",
+      duration: "Jan 2020 - Present",
+      location: "San Francisco, CA",
+      descriptions: [
+        "Lead frontend development for enterprise applications using React and TypeScript.",
+        "Implemented CI/CD pipelines and improved test coverage by 40%",
+      ],
+    },
+    {
+      title: "Software Developer",
+      companyInfo: "WebDev Agency",
+      duration: "Jun 2017 - Dec 2019",
+      location: "San Francisco, CA",
+      descriptions: [
+        "Developed responsive web applications for various clients.",
+        "Collaborated with design team to implement pixel-perfect UIs",
+      ],
+    },
+  ],
+};
