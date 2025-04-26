@@ -1,3 +1,4 @@
+import React from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
@@ -11,11 +12,16 @@ interface ResumePreviewProps {
   togglePreview: () => void;
 }
 
-export function ResumePreview({
+function ResumePreviewComponent({
   profileData,
   showPreview,
   togglePreview,
 }: ResumePreviewProps) {
+  console.log("ResumePreview rendering");
+  console.log("profileData reference:", profileData);
+  console.log("showPreview:", showPreview);
+  console.log("togglePreview:", togglePreview);
+
   return (
     <div className="space-y-4">
       <Alert className="bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-900 p-3 mb-6 sm:p-4">
@@ -84,3 +90,16 @@ export function ResumePreview({
     </div>
   );
 }
+
+export const ResumePreview = React.memo(
+  ResumePreviewComponent,
+  (prevProps, nextProps) => {
+    // Only re-render if these specific properties change
+    return (
+      prevProps.showPreview === nextProps.showPreview &&
+      JSON.stringify(prevProps.profileData) ===
+        JSON.stringify(nextProps.profileData)
+      // Intentionally ignoring togglePreview function reference changes
+    );
+  }
+);
