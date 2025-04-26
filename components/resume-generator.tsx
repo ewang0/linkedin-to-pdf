@@ -16,12 +16,12 @@ import { LinkedInLoginSection } from "./resume/linkedin-login-section";
 import { ProfileUrlInput } from "./resume/profile-url-input";
 import { ErrorAlert } from "./resume/error-alert";
 import { ResumePreview } from "./resume/resume-preview";
-import { useCallback, useMemo } from "react";
 
 export default function LinkedInResumeGenerator() {
   const { isAuthenticated, isLoggingIn, authError, handleLogin, handleLogout } =
     useLinkedInAuth();
 
+  // TODO: reduce to linkedinUrl, username, urlError, setLinkedinUrl
   const {
     linkedinUrl,
     updateLinkedinUrl,
@@ -37,14 +37,9 @@ export default function LinkedInResumeGenerator() {
     showPreview,
     generationError,
     generateResume,
-    togglePreview: originalTogglePreview,
+    togglePreview,
     resetGenerator,
   } = useResumeGenerator();
-
-  // Memoize the togglePreview function
-  const memoizedTogglePreview = useCallback(() => {
-    originalTogglePreview();
-  }, [originalTogglePreview]);
 
   // Combine errors for display
   const error = authError || urlError || generationError;
@@ -62,16 +57,6 @@ export default function LinkedInResumeGenerator() {
     resetUrl();
     resetGenerator();
   };
-
-  // Memoize all props for ResumePreview
-  const resumePreviewProps = useMemo(
-    () => ({
-      profileData,
-      showPreview,
-      togglePreview: memoizedTogglePreview,
-    }),
-    [profileData, showPreview, memoizedTogglePreview]
-  );
 
   return (
     <Card className="shadow-md">
@@ -107,7 +92,11 @@ export default function LinkedInResumeGenerator() {
           {error && <ErrorAlert error={error} />}
 
           {profileData && !isGenerating && (
-            <ResumePreview {...resumePreviewProps} />
+            <ResumePreview
+              profileData={profileData}
+              showPreview={showPreview}
+              togglePreview={togglePreview}
+            />
           )}
         </div>
       </CardContent>

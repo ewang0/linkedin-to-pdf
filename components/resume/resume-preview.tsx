@@ -91,15 +91,4 @@ function ResumePreviewComponent({
   );
 }
 
-export const ResumePreview = React.memo(
-  ResumePreviewComponent,
-  (prevProps, nextProps) => {
-    // Only re-render if these specific properties change
-    return (
-      prevProps.showPreview === nextProps.showPreview &&
-      JSON.stringify(prevProps.profileData) ===
-        JSON.stringify(nextProps.profileData)
-      // Intentionally ignoring togglePreview function reference changes
-    );
-  }
-);
+export const ResumePreview = React.memo(ResumePreviewComponent);

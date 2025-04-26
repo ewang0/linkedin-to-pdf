@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ProfileData } from "@/types";
+import { TEST_PROFILE_DATA } from "@/lib/config";
+
+const TESTING = true;
 
 export function useResumeGenerator() {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
@@ -11,6 +14,12 @@ export function useResumeGenerator() {
     setGenerationError(null);
     setIsGenerating(true);
     setShowPreview(true);
+
+    if (TESTING) {
+      setProfileData(TEST_PROFILE_DATA);
+      setIsGenerating(false);
+      return;
+    }
 
     try {
       const loadResponse = await fetch("/api/load-profile-data", {
@@ -40,9 +49,9 @@ export function useResumeGenerator() {
     }
   };
 
-  const togglePreview = () => {
-    setShowPreview(!showPreview);
-  };
+  const togglePreview = useCallback(() => {
+    setShowPreview((prev) => !prev);
+  }, [setShowPreview]);
 
   const resetGenerator = () => {
     setProfileData(null);
