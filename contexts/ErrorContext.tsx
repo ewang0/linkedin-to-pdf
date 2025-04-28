@@ -8,10 +8,8 @@ interface ErrorContextType {
   clearError: () => void;
 }
 
-// Create context with a default value (can be undefined or a specific shape)
 const ErrorContext = createContext<ErrorContextType | undefined>(undefined);
 
-// Provider component
 export const ErrorProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
 
@@ -21,7 +19,7 @@ export const ErrorProvider = ({ children }: { children: ReactNode }) => {
 
   // Ensure setError also clears previous errors if needed, or handle accumulation
   const setAndClearError = (newError: string | null) => {
-    setError(newError); // Replace current error
+    setError(newError);
   };
 
   return (
