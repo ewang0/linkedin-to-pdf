@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { ProfileData } from "@/types";
 import { TEST_PROFILE_DATA } from "@/lib/config";
 
-const TESTING = true;
+const useTestData = process.env.NEXT_PUBLIC_USE_TEST_DATA === "true";
 
 export function useResumeGenerator() {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
@@ -15,7 +15,10 @@ export function useResumeGenerator() {
     setIsGenerating(true);
     setShowPreview(true);
 
-    if (TESTING) {
+    if (useTestData) {
+      console.log("Using test data based on environment variable.");
+      // Simulate async behavior slightly
+      await new Promise((resolve) => setTimeout(resolve, 500));
       setProfileData(TEST_PROFILE_DATA);
       setIsGenerating(false);
       return;

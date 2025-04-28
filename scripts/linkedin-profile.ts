@@ -1,13 +1,21 @@
-import { LINKEDIN_AUTH_FILE } from "@/lib/config";
 import { chromium, Page } from "playwright";
+import { getCookies } from "@/lib/db";
 
 export async function loadLinkedInProfile(username: string) {
+  const cookies = getCookies();
+  if (!cookies) {
+    throw new Error(
+      "LinkedIn authentication cookies not found. Please log in first."
+    );
+  }
+
   const browser = await chromium.launch({
     headless: true,
   });
-  const context = await browser.newContext({
-    storageState: LINKEDIN_AUTH_FILE,
-  });
+
+  // Create context and manually add cookies from the database
+  const context = await browser.newContext();
+  await context.addCookies(cookies);
 
   const page = await context.newPage();
   await page.goto(`https://www.linkedin.com/in/${username}/`);
