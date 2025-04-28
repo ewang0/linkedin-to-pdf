@@ -12,21 +12,20 @@ import { Separator } from "@/components/ui/separator";
 import { useLinkedInAuth } from "@/hooks/useLinkedInAuth";
 import { useLinkedInProfile } from "@/hooks/useLinkedInProfile";
 import { useResumeGenerator } from "@/hooks/useResumeGenerator";
+import { useErrorContext } from "@/contexts/ErrorContext";
 import { LinkedInLoginSection } from "./resume/linkedin-login-section";
 import { ProfileUrlInput } from "./resume/profile-url-input";
 import { ErrorAlert } from "./resume/error-alert";
 import { ResumePreview } from "./resume/resume-preview";
 
 export default function LinkedInResumeGenerator() {
-  const { isAuthenticated, isLoggingIn, authError, handleLogin, handleLogout } =
+  const { isAuthenticated, isLoggingIn, handleLogin, handleLogout } =
     useLinkedInAuth();
 
-  // TODO: reduce to linkedinUrl, username, urlError, setLinkedinUrl
   const {
     linkedinUrl,
     updateLinkedinUrl,
     isUrlValid,
-    urlError,
     extractUsername,
     resetUrl,
   } = useLinkedInProfile();
@@ -35,23 +34,27 @@ export default function LinkedInResumeGenerator() {
     profileData,
     isGenerating,
     showPreview,
-    generationError,
     generateResume,
     togglePreview,
     resetGenerator,
   } = useResumeGenerator();
 
-  // Combine errors for display
-  const error = authError || urlError || generationError;
+  const { error, clearError, setError } = useErrorContext();
 
   const handleGenerate = async () => {
+    clearError();
     const username = extractUsername();
     if (username) {
       await generateResume(username);
+    } else {
+      if (!error) {
+        setError(
+          "Please enter a valid LinkedIn profile URL before generating."
+        );
+      }
     }
   };
 
-  // Handle logout with cleanup
   const handleLogoutWithCleanup = async () => {
     await handleLogout();
     resetUrl();

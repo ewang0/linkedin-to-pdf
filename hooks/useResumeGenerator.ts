@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { ProfileData } from "@/types";
 import { TEST_PROFILE_DATA } from "@/lib/config";
+import { useErrorContext } from "@/contexts/ErrorContext";
 
 const useTestData = process.env.NEXT_PUBLIC_USE_TEST_DATA === "true";
 
@@ -8,10 +9,10 @@ export function useResumeGenerator() {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPreview, setShowPreview] = useState(true);
-  const [generationError, setGenerationError] = useState<string | null>(null);
+  const { setError, clearError } = useErrorContext();
 
   const generateResume = async (username: string) => {
-    setGenerationError(null);
+    clearError();
     setIsGenerating(true);
     setShowPreview(true);
 
@@ -42,8 +43,8 @@ export function useResumeGenerator() {
       setProfileData(profileData.data);
     } catch (err) {
       console.error(err);
-      setGenerationError(
-        `An error occurred: ${
+      setError(
+        `An error occurred while generating the resume: ${
           err instanceof Error ? err.message : "Unknown error"
         }`
       );
@@ -58,17 +59,15 @@ export function useResumeGenerator() {
 
   const resetGenerator = () => {
     setProfileData(null);
-    setGenerationError(null);
+    clearError();
   };
 
   return {
     profileData,
     isGenerating,
     showPreview,
-    generationError,
     generateResume,
     togglePreview,
     resetGenerator,
-    setGenerationError,
   };
 }
