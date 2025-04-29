@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
+import { useErrorContext } from "@/contexts/ErrorContext";
 
 export function useLinkedInAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [authError, setAuthError] = useState<string | null>(null);
+  const { setError, clearError } = useErrorContext();
 
   // Check if user is authenticated on mount
   useEffect(() => {
@@ -29,7 +30,7 @@ export function useLinkedInAuth() {
   const handleLogin = async () => {
     try {
       setIsLoggingIn(true);
-      setAuthError(null);
+      clearError();
 
       const response = await fetch("/api/login", {
         method: "POST",
@@ -43,12 +44,11 @@ export function useLinkedInAuth() {
       if (data.success) {
         setIsAuthenticated(true);
       } else {
-        setAuthError(
-          "LinkedIn login failed: " + (data.error || "Unknown error")
-        );
+        setError("LinkedIn login failed: " + (data.error || "Unknown error"));
       }
     } catch (err) {
       console.error("Login error:", err);
+      setError("An unexpected error occurred during login.");
     } finally {
       setIsLoggingIn(false);
     }
@@ -62,21 +62,21 @@ export function useLinkedInAuth() {
 
       if (response.ok) {
         setIsAuthenticated(false);
-        setAuthError(null);
+        clearError();
       } else {
         console.error("Failed to logout properly");
+        setError("Logout failed on the server.");
       }
     } catch (err) {
       console.error("Logout error:", err);
       setIsAuthenticated(false);
-      setAuthError(null);
+      setError("An unexpected error occurred during logout.");
     }
   };
 
   return {
     isAuthenticated,
     isLoggingIn,
-    authError,
     handleLogin,
     handleLogout,
   };
